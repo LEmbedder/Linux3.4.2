@@ -1,0 +1,27 @@
+1：打补丁
+	patch -p1 < ../linux-3.4.2_100ask.patch
+2：配置编译
+	一. 内核启动流程，据此配置内核(机器ID)
+	2.1 修改Makefile
+	2.2 选择默认配置 : make s3c2410_defconfig
+	2.3 make uImage
+
+3:nfs下载uImage到nandflash：
+	(1):全写
+	nfs 30000000 192.168.1.11:/work/platform-2440/system/kernel/linux-3.4.2/arch/arm/boot/uImage
+	nand erase 0x00120000 0x00600000 
+	nand write 30000000 0x00120000 0x00600000
+	一次下载：
+	nfs 30000000 192.168.1.11:/work/platform-2440/system/uboot/u-boot-2012.04.01/u-boot.bin && nand erase 0x00 0x100000 && nand write 30000000 0x00 0x100000
+
+	(2):简写方式：
+	nfs 30000000 192.168.1.11:/work/platform-2440/system/kernel/linux-3.4.2/arch/arm/boot/uImage
+	nand erase.part kernel
+	nand write 30000000 kernel
+
+	一次下载：
+	nfs 30000000 192.168.1.11:/work/platform-2440/system/kernel/linux-3.4.2/arch/arm/boot/uImage && nand erase.part kernel && nand write 30000000 kernel
+
+
+4：设置启动参数
+	set bootargs console=ttySAC0,115200 root=/dev/mtdblock3
